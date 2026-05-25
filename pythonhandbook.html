@@ -1,0 +1,1373 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Python Daily Handbook</title>
+  
+  <meta name="theme-color" content="#1D9E75">
+  <meta name="apple-mobile-web-app-capable" content="yes">
+  <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+  
+  <link rel="manifest" href="data:application/manifest+json,%7B%22name%22%3A%22Python%20Daily%20Handbook%22%2C%22short_name%22%3A%22Py%20Handbook%22%2C%22start_url%22%3A%22.%22%2C%22display%22%3A%22standalone%22%2C%22background_color%22%3A%22%23121212%22%2C%22theme_color%22%3A%22%231D9E75%22%7D">
+
+  <style>
+    /* Mobile-First Reset & Variablized Design Tokens */
+    * { box-sizing: border-box; margin: 0; padding: 0; }
+    
+    :root {
+      --accent: #1D9E75;
+      --accent-light: #E1F5EE;
+      --accent-dark: #0F6E56;
+      --accent-text: #085041;
+      
+      /* Light Theme Defaults */
+      --bg-primary: #ffffff;
+      --bg-secondary: #f7f9fa;
+      --text-primary: #1a1a1a;
+      --text-secondary: #5e696d;
+      --border-color: #e1e4e6;
+      
+      --badge-core-bg: #E1F5EE;
+      --badge-core-txt: #085041;
+      --badge-inter-bg: #E6F1FB;
+      --badge-inter-txt: #0C447C;
+      --badge-adv-bg: #FAEEDA;
+      --badge-adv-txt: #633806;
+      --pre-bg: #f0f3f5;
+    }
+
+    /* Dark Theme Token Overrides */
+    [data-theme="dark"] {
+      --bg-primary: #121212;
+      --bg-secondary: #1e1e1e;
+      --text-primary: #e0e0e0;
+      --text-secondary: #a0a0a0;
+      --border-color: #333333;
+      
+      --badge-core-bg: #0b3427;
+      --badge-core-txt: #a3eccd;
+      --badge-inter-bg: #092543;
+      --badge-inter-txt: #a0ccf7;
+      --badge-adv-bg: #3a2205;
+      --badge-adv-txt: #f3ce9e;
+      --pre-bg: #181818;
+    }
+
+    body {
+      font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif;
+      font-size: 16px;
+      line-height: 1.6;
+      background-color: var(--bg-primary);
+      color: var(--text-primary);
+      padding: 1rem;
+      transition: background-color 0.3s, color 0.3s;
+    }
+
+    /* Header Bar Settings */
+    .header-bar {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      margin-bottom: 0.5rem;
+    }
+
+    h1 {
+      font-size: 22px;
+      font-weight: 600;
+      color: var(--text-primary);
+    }
+
+    /* Theme Toggle Button Style */
+    .theme-btn {
+      background: var(--bg-secondary);
+      border: 1px solid var(--border-color);
+      color: var(--text-primary);
+      padding: 6px 12px;
+      border-radius: 20px;
+      font-size: 13px;
+      font-weight: bold;
+      cursor: pointer;
+    }
+
+    .sub {
+      font-size: 14px;
+      color: var(--text-secondary);
+      margin-bottom: 1rem;
+    }
+
+    /* Progress Mechanics */
+    .pbar {
+      background: var(--bg-secondary);
+      border-radius: 20px;
+      height: 8px;
+      margin-bottom: 4px;
+      overflow: hidden;
+    }
+    .pfill {
+      background: var(--accent);
+      height: 100%;
+      width: 0%;
+      border-radius: 20px;
+      transition: width .4s ease;
+    }
+    .ptxt {
+      font-size: 12px;
+      color: var(--text-secondary);
+      margin-bottom: 1.25rem;
+    }
+
+    /* Responsive Grid for Stats Card Dashboard */
+    .stats {
+      display: grid;
+      grid-template-columns: repeat(2, 1fr);
+      gap: 8px;
+      margin-bottom: 1.5rem;
+    }
+    .sc {
+      background: var(--bg-secondary);
+      border: 1px solid var(--border-color);
+      border-radius: 12px;
+      padding: 12px;
+      text-align: center;
+    }
+    .sn { font-size: 20px; font-weight: 600; color: var(--text-primary); }
+    .sl { font-size: 12px; color: var(--text-secondary); margin-top: 2px; }
+
+    /* Horizontally Swipeable Navigation Filter for Mobile Screens */
+    .nav {
+      display: flex;
+      gap: 6px;
+      overflow-x: auto;
+      padding-bottom: 8px;
+      margin-bottom: 1.25rem;
+      scrollbar-width: none; /* Hide for Firefox */
+    }
+    .nav::-webkit-scrollbar { display: none; } /* Hide for Chrome/Safari */
+    
+    .tb {
+      font-size: 13px;
+      padding: 8px 14px;
+      border-radius: 20px;
+      border: 1px solid var(--border-color);
+      background: var(--bg-secondary);
+      color: var(--text-secondary);
+      cursor: pointer;
+      white-space: nowrap;
+      flex-shrink: 0;
+    }
+    .tb.act { background: var(--accent); border-color: var(--accent); color: #fff; }
+    .tb.fin { border-color: var(--accent); color: var(--accent); }
+
+    /* Topic Accordion UI Setup */
+    .sec { display: none; }
+    .sec.act { display: block; }
+    .stitle { font-size: 18px; font-weight: 600; margin-bottom: 2px; }
+    .ssub { font-size: 13px; color: var(--text-secondary); margin-bottom: 1rem; }
+    
+    .tp {
+      border: 1px solid var(--border-color);
+      border-radius: 12px;
+      margin-bottom: 10px;
+      background: var(--bg-primary);
+      overflow: hidden;
+    }
+    .th {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      padding: 14px;
+      cursor: pointer;
+      gap: 10px;
+    }
+    .th:hover { background: var(--bg-secondary); }
+    .tlbl { font-size: 15px; font-weight: 500; color: var(--text-primary); flex: 1; }
+    
+    .tbadge {
+      font-size: 11px;
+      padding: 2px 8px;
+      border-radius: 12px;
+      font-weight: 600;
+    }
+    .bc { background: var(--badge-core-bg); color: var(--badge-core-txt); }
+    .bi { background: var(--badge-inter-bg); color: var(--badge-inter-txt); }
+    .ba { background: var(--badge-adv-bg); color: var(--badge-adv-txt); }
+    
+    .chev {
+      transition: transform .25s;
+      font-size: 14px;
+      color: var(--text-secondary);
+      display: inline-block;
+    }
+    .chev.op { transform: rotate(180deg); }
+
+    /* Container content body formatting */
+    .tbody { display: none; padding: 14px; border-top: 1px solid var(--border-color); background: var(--bg-secondary); }
+    .tbody.op { display: block; }
+    .tbody p { font-size: 14px; color: var(--text-primary); margin-bottom: 10px; }
+    .tbody ul { font-size: 14px; color: var(--text-primary); padding-left: 18px; margin-bottom: 10px; }
+    
+    /* Codeblock Optimization for Small Screens to prevent breakages */
+    pre {
+      background: var(--pre-bg);
+      border: 1px solid var(--border-color);
+      border-radius: 8px;
+      padding: 12px;
+      font-family: ui-monospace, SFMono-Regular, SF Mono, Menlo, Consolas, Liberation Mono, monospace;
+      font-size: 12.5px;
+      color: var(--text-primary);
+      overflow-x: auto;
+      margin: 8px 0 12px;
+      white-space: pre;
+    }
+
+    /* Quiz Elements Optimized for Easy Thumb Tapping */
+    .qbox { background: var(--bg-primary); border: 1px solid var(--border-color); border-radius: 10px; padding: 12px; margin-top: 12px; }
+    .qq { font-size: 14px; font-weight: 600; margin-bottom: 8px; }
+    .qopts button {
+      display: block;
+      width: 100%;
+      text-align: left;
+      padding: 10px 14px;
+      margin-bottom: 6px;
+      font-size: 13.5px;
+      border-radius: 8px;
+      border: 1px solid var(--border-color);
+      background: var(--bg-primary);
+      color: var(--text-primary);
+      cursor: pointer;
+    }
+    .qopts button.ok { background: var(--badge-core-bg); border-color: var(--accent); color: var(--badge-core-txt); font-weight: bold; }
+    .qopts button.no { background: #FCEBEB; border-color: #E24B4A; color: #791F1F; }
+    [data-theme="dark"] .qopts button.no { background: #4c1c1c; border-color: #e24b4a; color: #fcc9c9; }
+    
+    .qfb { font-size: 13px; margin-top: 8px; padding: 8px 12px; border-radius: 6px; }
+    .fb-ok { background: var(--badge-core-bg); color: var(--badge-core-txt); }
+    .fb-no { background: #FCEBEB; color: #791F1F; }
+    [data-theme="dark"] .fb-no { background: #4c1c1c; color: #fcc9c9; }
+
+    .mdb {
+      margin-top: 12px;
+      font-size: 13.5px;
+      padding: 10px 16px;
+      width: 100%; /* Full width execution button on mobile devices */
+      border-radius: 8px;
+      border: 1px solid var(--border-color);
+      background: var(--bg-primary);
+      color: var(--text-primary);
+      font-weight: 600;
+      cursor: pointer;
+    }
+    .mdb:disabled { background: var(--border-color); color: var(--text-secondary); cursor: default; }
+
+    /* Smooth Tablet Scaling Enhancement rules */
+    @media(min-width:601px) {
+      body { max-width: 650px; margin: 0 auto; padding: 2rem 1rem; }
+      h1 { font-size: 26px; }
+      .stats { grid-template-columns: repeat(4, 1fr); }
+      .mdb { width: auto; }
+    }
+  </style>
+</head>
+<body>
+
+  <div class="hb">
+    <div class="header-bar">
+      <h1>Python Daily Handbook</h1>
+      <button class="theme-btn" id="themeToggle" onclick="toggleTheme()">🌙 Dark</button>
+    </div>
+    <p class="sub">Review one section daily. Mark topics done as you go.</p>
+    
+    <div class="pbar"><div class="pfill" id="pf"></div></div>
+    <p class="ptxt" id="pt"></p>
+    
+    <div class="stats">
+      <div class="sc"><div class="sn" id="sd">0</div><div class="sl">Done</div></div>
+      <div class="sc"><div class="sn" id="st">0</div><div class="sl">Total</div></div>
+      <div class="sc"><div class="sn" id="sp">0%</div><div class="sl">Complete</div></div>
+      <div class="sc"><div class="sn" id="ss">0🔥</div><div class="sl">Day streak</div></div>
+    </div>
+    
+    <div class="nav" id="nav"></div>
+    <div id="secs"></div>
+  </div>
+
+<script>
+// Keep original data sets completely intact
+const S=[
+{id:"basics",label:"1. Basics",topics:[
+{id:"vars",label:"Variables & data types",level:"core",content:`<p>Python is dynamically typed — no need to declare types, just assign values.</p>
+<pre>x = 10           # int
+y = 3.14         # float
+name = "Ifeanyi" # str
+active = True    # bool
+nothing = None   # null/empty
+
+print(type(x))   # &lt;class 'int'&gt;
+
+a, b, c = 1, 2, 3    # multiple assignment
+x = y = z = 0        # same value to many
+
+int("42")        # 42
+float("3.14")    # 3.14
+str(100)         # "100"
+bool(0)          # False  —  bool(1) = True</pre>`,
+quiz:{q:"What does bool(0) return?",opts:["True","False","0","None"],ans:1,exp:"0 is falsy in Python. bool(0) returns False. bool(any non-zero) returns True."}},
+{id:"strings",label:"Strings",level:"core",content:`<p>Strings are immutable sequences of characters. Single or double quotes both work.</p>
+<pre>s = "Hello, Ifeanyi"
+
+s[0]             # 'H'  — first character
+s[-1]            # 'i'  — last character
+s[0:5]           # 'Hello'
+s[::-1]          # reverses the string
+
+s.upper()        # 'HELLO, IFEANYI'
+s.lower()
+s.strip()        # remove leading/trailing spaces
+s.replace("Hello", "Hi")
+s.split(",")     # ['Hello', ' Ifeanyi']
+",".join(["a","b"])   # 'a,b'
+s.startswith("He")    # True
+s.find("ean")         # index or -1
+s.count("l")          # 2
+
+# F-strings — the clean modern way to format
+name = "Ifeanyi"
+age  = 30
+print(f"I am {name}, age {age}")
+print(f"Next year: {age + 1}")</pre>`,
+quiz:{q:"What does 'Python'[::-1] give?",opts:["Python","nohtyP","Pytho","nohtP"],ans:1,exp:"[::-1] reverses the string step by step from the end."}},
+{id:"nums",label:"Numbers & math",level:"core",content:`<pre>10 + 3    # 13
+10 - 3    # 7
+10 * 3    # 30
+10 / 3    # 3.333... (always float)
+10 // 3   # 3   floor division
+10 % 3    # 1   remainder (modulo)
+10 ** 2   # 100 exponentiation
+
+import math
+math.sqrt(16)    # 4.0
+math.ceil(3.2)   # 4
+math.floor(3.9)  # 3
+math.pi          # 3.14159...
+
+round(3.14159, 2)   # 3.14
+abs(-5)             # 5
+
+10 % 2 == 0   # True  = even number
+11 % 2 == 0   # False = odd number</pre>`,
+quiz:{q:"What does 17 % 5 give?",opts:["3","2","1","3.4"],ans:1,exp:"17 divided by 5 is 3 remainder 2. % returns the remainder only."}},
+{id:"inputout",label:"Input & output",level:"core",content:`<pre>print("Hello")
+print("a", "b", sep="-")   # a-b
+print("done", end="!")      # no newline
+
+name  = input("Your name: ")
+age   = int(input("Age: "))      # always convert!
+price = float(input("Price: "))
+
+# Format output nicely
+print(f"{'Name':<10} {'Score':>5}")  # align columns
+print(f"{3.14159:.2f}")              # 3.14
+print(f"{1_000_000:,}")             # 1,000,000</pre>`,
+quiz:{q:"input() always returns what type?",opts:["int","float","str","depends on input"],ans:2,exp:"input() always returns a string — even if the user types 42. Always convert: int(input())."}},
+]},
+{id:"control",label:"2. Control flow",topics:[
+{id:"ifelse",label:"If / elif / else",level:"core",content:`<pre>score = 75
+if score >= 80:
+    print("Excellent")
+elif score >= 60:
+    print("Good")
+elif score >= 40:
+    print("Pass")
+else:
+    print("Fail")
+
+# Operators: ==  !=  >  <  >=  <=
+
+if age > 18 and has_id:
+    print("Access granted")
+if tired or hungry:
+    print("Take a break")
+if not is_banned:
+    print("Welcome")
+
+# One-line ternary
+status = "adult" if age >= 18 else "minor"
+
+# Membership check
+if "mango" in ["apple","mango","pear"]:
+    print("Found")
+if key in my_dict:
+    print("Key exists")</pre>`,
+quiz:{q:"Which is the correct ternary syntax?",opts:["x = 1 if True","x = 1 if True else 0","if True: x=1 else x=0","x = if True 1"],ans:1,exp:"Python ternary: value_if_true if condition else value_if_false"}},
+{id:"forloop",label:"For loops",level:"core",content:`<pre>for i in range(5):          # 0 1 2 3 4
+    print(i)
+
+for i in range(1, 6):       # 1 2 3 4 5
+    print(i)
+
+for i in range(0, 10, 2):   # 0 2 4 6 8
+    print(i)
+
+fruits = ["mango","apple","pawpaw"]
+for fruit in fruits:
+    print(fruit)
+
+for i, fruit in enumerate(fruits):
+    print(i, fruit)    # 0 mango, 1 apple...
+
+person = {"name":"Ifeanyi","city":"Asaba"}
+for key, value in person.items():
+    print(key, ":", value)
+
+names = ["Ada","Bola"]
+ages  = [25, 30]
+for name, age in zip(names, ages):
+    print(name, age)</pre>`,
+quiz:{q:"What does enumerate(['a','b','c']) give per iteration?",opts:["Just the value","Just the index","Both index and value","A dictionary"],ans:2,exp:"enumerate() gives (index, value) pairs: (0,'a'), (1,'b'), (2,'c')"}},
+{id:"whileloop",label:"While loops",level:"core",content:`<pre>count = 0
+while count < 5:
+    print(count)
+    count += 1   # MUST update — or infinite loop!
+
+for i in range(10):
+    if i == 5:
+        break       # exit loop immediately
+    print(i)
+
+for i in range(10):
+    if i % 2 == 0:
+        continue    # skip to next iteration
+    print(i)        # 1 3 5 7 9
+
+for i in range(5):
+    if i == 10:
+        break
+else:
+    print("Completed without break")</pre>`,
+quiz:{q:"What does 'continue' do?",opts:["Exits the loop","Restarts from beginning","Skips to next iteration","Pauses execution"],ans:2,exp:"continue skips the rest of the current iteration and jumps to the next one."}},
+]},
+{id:"data",label:"3. Data structures",topics:[
+{id:"lists",label:"Lists",level:"core",content:`<p>Ordered, mutable, allows duplicates. Most common data structure.</p>
+<pre>nums = [1, 2, 3, 4, 5]
+
+nums[0]          # 1  first
+nums[-1]         # 5  last
+nums[1:3]        # [2, 3]
+nums[::-1]       # [5,4,3,2,1] reversed
+
+nums.append(6)         # add to end
+nums.insert(0, 0)      # insert at index
+nums.extend([7, 8])    # add multiple
+nums.remove(3)         # remove by value
+nums.pop()             # remove last
+nums.pop(0)            # remove at index
+
+len(nums)              # length
+nums.count(2)          # count occurrences
+nums.index(4)          # find index
+4 in nums              # True / False
+
+nums.sort()            # sort in place
+nums.sort(reverse=True)
+sorted(nums)           # new sorted list
+nums.copy()            # independent copy</pre>`,
+quiz:{q:"Difference between sort() and sorted()?",opts:["No difference","sort() is faster","sort() modifies in place; sorted() returns new list","sorted() only works on numbers"],ans:2,exp:"sort() changes the original list. sorted() leaves it unchanged and returns a new sorted list."}},
+{id:"dicts",label:"Dictionaries",level:"core",content:`<p>Key-value pairs. The most-used structure in real Python work.</p>
+<pre>person = {"name":"Ifeanyi","city":"Asaba","age":30}
+
+person["name"]                  # "Ifeanyi"
+person.get("phone")             # None — no crash
+person.get("phone", "N/A")      # "N/A" default
+
+person["email"] = "i@g.com"     # add or update
+del person["age"]                # delete key
+person.pop("city")               # delete & return value
+
+"name" in person                 # True
+"phone" in person                # False
+
+for k, v in person.items():
+    print(k, v)
+
+person.keys()    # all keys
+person.values()  # all values
+len(person)      # number of keys
+
+data = {
+    "user": {"name":"Ifeanyi","age":30},
+    "scores": [95,87,91]
+}
+data["user"]["name"]    # "Ifeanyi"  (nested access)
+data["scores"][0]       # 95</pre>`,
+quiz:{q:"What does dict.get('key','default') do if key is missing?",opts:["Raises KeyError","Returns None","Returns 'default'","Adds the key"],ans:2,exp:"get() with a default returns that default instead of crashing when the key doesn't exist."}},
+{id:"tuples",label:"Tuples",level:"core",content:`<p>Like lists but immutable — cannot change after creation. Use for fixed data.</p>
+<pre>point  = (10, 20)
+single = (5,)        # comma needed for single item!
+
+point[0]    # 10
+point[-1]   # 20
+
+x, y = point     # unpack
+r, g, b = (255, 128, 0)
+
+# Swap variables
+a, b = 5, 10
+a, b = b, a       # now a=10, b=5
+
+# List of tuples (very common pattern)
+records = [("Ada",25),("Bola",30),("Chidi",28)]
+for name, age in records:
+    print(name, age)</pre>`,
+quiz:{q:"How to create a single-item tuple?",opts:["(5)","[5]","(5,)","tuple(5)"],ans:2,exp:"(5) is just parentheses. The trailing comma (5,) makes it a tuple."}},
+{id:"sets",label:"Sets",level:"inter",content:`<p>Unordered unique values. Perfect for removing duplicates and fast membership testing.</p>
+<pre>nums = {1, 2, 3, 3, 2, 1}
+print(nums)          # {1, 2, 3}
+
+# Remove duplicates from a list
+clean = list(set([1,2,2,3,3,3,4]))
+
+a = {1, 2, 3, 4}
+b = {3, 4, 5, 6}
+a & b    # {3, 4}       intersection
+a | b    # {1,2,3,4,5,6} union
+a - b    # {1, 2}       difference
+a ^ b    # {1,2,5,6}    symmetric difference
+
+a.add(5)
+a.discard(1)   # no error if not found
+3 in a         # True (very fast lookup)</pre>`,
+quiz:{q:"What is {1,2,3} & {2,3,4}?",opts:["{1,2,3,4}","{2,3}","{1,4}","error"],ans:1,exp:"& gives intersection — only values present in BOTH sets."}},
+{id:"comps",label:"List & dict comprehensions",level:"inter",content:`<p>Concise one-line way to build lists and dicts. Very Pythonic.</p>
+<pre># [expression for item in iterable if condition]
+squares = [x**2 for x in range(1, 6)]
+# [1, 4, 9, 16, 25]
+
+evens = [x for x in range(20) if x % 2 == 0]
+
+names = ["  ada ", " BOLA", "chidi "]
+clean = [n.strip().title() for n in names]
+# ['Ada', 'Bola', 'Chidi']
+
+# Dict comprehension
+squared = {x: x**2 for x in range(5)}
+# {0:0, 1:1, 2:4, 3:9, 4:16}
+
+# Invert a dict
+flipped = {v: k for k, v in {"a":1,"b":2}.items()}
+# {1:'a', 2:'b'}
+
+# Filter list of dicts
+people = [{"name":"Ada","age":17},{"name":"Bola","age":25}]
+adults = [p for p in people if p["age"] >= 18]</pre>`,
+quiz:{q:"What does [x*2 for x in range(4)] produce?",opts:["[2,4,6,8]","[0,2,4,6]","[1,2,3,4]","[0,1,2,3]"],ans:1,exp:"range(4) = 0,1,2,3. Each multiplied by 2 = 0,2,4,6."}},
+]},
+{id:"funcs",label:"4. Functions",topics:[
+{id:"deffunc",label:"Defining functions",level:"core",content:`<pre>def greet(name):
+    print(f"Hello, {name}!")
+
+greet("Ifeanyi")
+
+def add(a, b):
+    return a + b          # return a value
+
+result = add(3, 5)        # 8
+
+def greet(name, msg="Hello"):    # default param
+    print(f"{msg}, {name}!")
+
+greet("Ifeanyi")           # Hello, Ifeanyi!
+greet("Ifeanyi", "Hi")     # Hi, Ifeanyi!
+
+def min_max(nums):         # return multiple values
+    return min(nums), max(nums)
+
+low, high = min_max([3,1,9,5])
+
+def user_info(name, age, city):
+    print(f"{name}, {age}, {city}")
+
+user_info(age=30, city="Asaba", name="Ifeanyi")  # keyword args</pre>`,
+quiz:{q:"def f(a, b=10): return a+b  — f(5) returns?",opts:["5","10","15","Error"],ans:2,exp:"b defaults to 10 when not provided. 5 + 10 = 15."}},
+{id:"argsw",label:"*args and **kwargs",level:"inter",content:`<pre># *args — any number of positional args (tuple)
+def total(*numbers):
+    return sum(numbers)
+
+total(1, 2, 3)          # 6
+total(10, 20, 30, 40)   # 100
+
+# **kwargs — any number of keyword args (dict)
+def show(**details):
+    for k, v in details.items():
+        print(f"{k}: {v}")
+
+show(name="Ifeanyi", city="Asaba", skill="Python")
+
+def mixed(required, *args, **kwargs):
+    print(required, args, kwargs)
+
+mixed("hi", 1, 2, x=10, y=20)
+# hi (1, 2) {'x': 10, 'y': 20}
+
+# Unpack when calling
+nums = [1, 2, 3]
+print(*nums)         # 1 2 3
+
+info = {"name":"Ifeanyi","age":30}
+user_info(**info)    # passes as keyword args</pre>`,
+quiz:{q:"What type is *args inside the function?",opts:["list","dict","tuple","set"],ans:2,exp:"*args collects positional arguments into a tuple, not a list."}},
+{id:"lambdas",label:"Lambda & higher-order functions",level:"inter",content:`<pre>square = lambda x: x ** 2
+square(5)    # 25
+
+add = lambda a, b: a + b
+add(3, 4)    # 7
+
+# Sort list of dicts by age
+people = [{"name":"Bola","age":25},{"name":"Ada","age":19}]
+people.sort(key=lambda p: p["age"])
+
+# map — apply function to every item
+nums = [1, 2, 3, 4, 5]
+doubled = list(map(lambda x: x*2, nums))
+# [2, 4, 6, 8, 10]
+
+# filter — keep where function returns True
+evens = list(filter(lambda x: x%2==0, nums))
+# [2, 4]
+
+# Equivalent with comprehension (often cleaner)
+doubled = [x*2 for x in nums]
+evens   = [x for x in nums if x%2==0]</pre>`,
+quiz:{q:"list(filter(lambda x: x>3, [1,2,3,4,5])) gives?",opts:["[1,2,3]","[4,5]","[3,4,5]","[True,True]"],ans:1,exp:"filter keeps items where True. Only 4 and 5 are > 3."}},
+{id:"decs",label:"Decorators",level:"adv",content:`<p>A decorator wraps a function to add behaviour before or after it runs.</p>
+<pre>import time
+
+def timer(func):
+    def wrapper(*args, **kwargs):
+        start  = time.time()
+        result = func(*args, **kwargs)
+        print(f"{func.__name__} took {time.time()-start:.4f}s")
+        return result
+    return wrapper
+
+@timer
+def slow_task():
+    time.sleep(1)
+    print("Done")
+
+slow_task()
+# Done
+# slow_task took 1.0012s
+
+class MyClass:
+    @staticmethod         # no self needed
+    def utility():
+        return "static"
+
+    @classmethod          # receives class
+    def from_data(cls, data):
+        return cls()
+
+    @property             # access like attribute
+    def name(self):
+        return self._name</pre>`,
+quiz:{q:"What does @property let you do?",opts:["Make attribute private","Call a method without ()","Create a static method","Copy a function"],ans:1,exp:"@property lets you access a method like an attribute — obj.name instead of obj.name()"}},
+]},
+{id:"regex",label:"5. Regex",topics:[
+{id:"regex_basics",label:"Regex basics",level:"inter",content:`<p>Regular expressions find patterns in text. Critical for scraping and data cleaning.</p>
+<pre>import re
+
+text = "Call me on 0801-234-5678 or 0901-987-6543"
+
+# findall — returns list of all matches
+phones = re.findall(r'\d{4}-\d{3}-\d{4}', text)
+# ['0801-234-5678', '0901-987-6543']
+
+# search — first match (or None)
+m = re.search(r'\d+', "Price: 5000 naira")
+if m:
+    print(m.group())   # '5000'
+
+# match — only at START of string
+re.match(r'\d+', "5000 naira")    # match
+re.match(r'\d+', "Price: 5000")   # None
+
+# sub — replace pattern
+clean = re.sub(r'\s+', ' ', "too   many    spaces")
+# 'too many spaces'
+
+# split — split by pattern
+parts = re.split(r'[,;|]', "a,b;c|d")
+# ['a', 'b', 'c', 'd']</pre>`,
+quiz:{q:"What does re.findall() return?",opts:["First match only","A match object","A list of all matches","True or False"],ans:2,exp:"re.findall() returns a list of all matching strings. re.search() returns only the first match object."}},
+{id:"regex_patterns",label:"Pattern reference",level:"inter",content:`<p>The patterns you will use 90% of the time:</p>
+<pre># CHARACTER CLASSES
+.       any character except newline
+\d      digit 0-9
+\D      not a digit
+\w      word char (letters, digits, _)
+\W      not a word char
+\s      whitespace
+\S      not whitespace
+[abc]   a or b or c
+[a-z]   any lowercase letter
+[^abc]  NOT a, b, or c
+
+# QUANTIFIERS
+* 0 or more
++       1 or more
+?       0 or 1  (optional)
+{3}     exactly 3
+{2,5}   between 2 and 5
+
+# ANCHORS
+^       start of string
+$       end of string
+\b      word boundary
+
+# GROUPS
+(abc)   capture group
+a|b     a or b</pre>
+<pre># REAL-WORLD PATTERNS
+# Email
+r'[\w.-]+@[\w.-]+\.\w+'
+
+# Nigerian phone number
+r'0[789]\d{9}'
+
+# Date dd/mm/yyyy
+r'\d{2}/\d{2}/\d{4}'
+
+# Price
+r'₦[\d,]+'
+
+# Extract numbers from text
+re.findall(r'\d+\.?\d*', "Cost: 1500.50")
+# ['1500.50']</pre>`,
+quiz:{q:"What does \\d+ match?",opts:["One digit","Any character","One or more digits","A decimal number"],ans:2,exp:"\\d = single digit. + = one or more. So \\d+ matches one or more consecutive digits."}},
+{id:"regex_groups",label:"Groups & extraction",level:"inter",content:`<pre>import re
+
+# Named groups — most readable
+text = "Name: Ifeanyi Okafor, Age: 30"
+pattern = r'Name: (?P&lt;name&gt;[\w ]+), Age: (?P&lt;age&gt;\d+)'
+m = re.search(pattern, text)
+if m:
+    print(m.group('name'))   # Ifeanyi Okafor
+    print(m.group('age'))    # 30
+
+# finditer — multiple matches with groups
+dates = "Born: 15/08/1993, Joined: 01/06/2020"
+for m in re.finditer(r'(\d{2})/(\d{2})/(\d{4})', dates):
+    day, month, year = m.group(1), m.group(2), m.group(3)
+    print(f"Day:{day} Month:{month} Year:{year}")
+
+# Practical: extract prices
+html = '&lt;span&gt;₦12,500&lt;/span&gt; and ₦8,000'
+prices = re.findall(r'₦([\d,]+)', html)
+# ['12,500', '8,000']
+nums = [int(p.replace(',','')) for p in prices]
+# [12500, 8000]</pre>`,
+quiz:{q:"How do you get matched text from re.search()?",opts:[".text",".result()",".group()","[0]"],ans:2,exp:".group() returns the matched string. .group(1) returns the first capture group."}},
+]},
+{id:"errors",label:"6. Error handling",topics:[
+{id:"tryex",label:"Try / except / finally",level:"core",content:`<pre>try:
+    num    = int(input("Number: "))
+    result = 10 / num
+    print(result)
+except ValueError:
+    print("Not a valid number!")
+except ZeroDivisionError:
+    print("Cannot divide by zero!")
+except Exception as e:
+    print(f"Unexpected error: {e}")
+else:
+    print("Success!")       # runs only if no error
+finally:
+    print("Always runs")    # cleanup here
+
+# Raise your own errors
+def withdraw(amount, balance):
+    if amount <= 0:
+        raise ValueError("Amount must be positive")
+    if amount > balance:
+        raise ValueError("Insufficient funds")
+    return balance - amount
+
+# Common exceptions:
+# ValueError  TypeError  KeyError  IndexError
+# FileNotFoundError  AttributeError  ZeroDivisionError</pre>`,
+quiz:{q:"When does the 'else' block run?",opts:["Always","Only if exception occurred","Only if NO exception occurred","Same as finally"],ans:2,exp:"else runs only when the try block completes without any exception — use it for code that belongs to the success path."}},
+]},
+{id:"oop",label:"7. OOP",topics:[
+{id:"classes",label:"Classes & objects",level:"inter",content:`<pre>class BankAccount:
+    bank_name = "Python Bank"     # class variable
+
+    def __init__(self, owner, balance=0):
+        self.owner  = owner       # instance variables
+        self.balance = balance
+        self._history = []        # _ = private by convention
+
+    def deposit(self, amount):
+        self.balance += amount
+        self._history.append(f"+{amount}")
+
+    def withdraw(self, amount):
+        if amount > self.balance:
+            raise ValueError("Insufficient funds")
+        self.balance -= amount
+
+    def __str__(self):    # what print(obj) shows
+        return f"{self.owner}: ₦{self.balance:,}"
+
+    def __repr__(self):   # developer representation
+        return f"BankAccount('{self.owner}', {self.balance})"
+
+acc = BankAccount("Ifeanyi", 5000)
+acc.deposit(2000)
+print(acc)    # Ifeanyi: ₦7,000</pre>`,
+quiz:{q:"What is __str__ used for?",opts:["Delete the object","Copy the object","Define what print(obj) shows","Initialize the object"],ans:2,exp:"__str__ defines the human-readable string shown when you print() an object."}},
+{id:"inherit",label:"Inheritance",level:"inter",content:`<pre>class Animal:
+    def __init__(self, name, sound):
+        self.name  = name
+        self.sound = sound
+
+    def speak(self):
+        return f"{self.name} says {self.sound}"
+
+class Dog(Animal):
+    def fetch(self):
+        return f"{self.name} fetches!"
+
+class GuideDog(Dog):         # multi-level
+    def __init__(self, name, owner):
+        super().__init__(name, "Woof")   # call parent
+        self.owner = owner
+
+    def guide(self):
+        return f"{self.name} guides {self.owner}"
+
+d = Dog("Rex", "Woof")
+print(d.speak())    # Rex says Woof
+print(d.fetch())    # Rex fetches!
+
+isinstance(d, Dog)     # True
+isinstance(d, Animal)  # True (inherits)</pre>`,
+quiz:{q:"What does super().__init__() do?",opts:["Creates new parent","Calls parent's constructor","Replaces parent","Copies parent methods"],ans:1,exp:"super() refers to the parent class. Calling its __init__ sets up the inherited data without repeating code."}},
+]},
+{id:"modules",label:"8. Modules & env",topics:[
+{id:"imports",label:"Imports & standard library",level:"core",content:`<pre>import math
+math.sqrt(25)
+
+from math import sqrt, pi, ceil
+
+import pandas as pd       # alias
+import numpy  as np
+import datetime as dt
+
+# Standard library (no install needed)
+import os           # file system, paths
+import sys          # interpreter
+import re           # regular expressions
+import json         # JSON parsing
+import datetime     # dates and times
+import random       # random numbers
+import collections  # Counter, defaultdict
+import itertools    # combinations, permutations
+import pathlib      # modern file paths
+import time         # sleep, timing
+import csv          # CSV reading/writing
+import logging      # logging (use instead of print)
+
+from datetime import datetime, timedelta
+now      = datetime.now()
+tomorrow = now + timedelta(days=1)
+
+from collections import Counter
+Counter(["apple","mango","apple","pear","apple"])
+# {'apple':3, 'mango':1, 'pear':1}</pre>`,
+quiz:{q:"Which module handles dates and times?",opts:["time","calendar","datetime","clock"],ans:2,exp:"datetime is the standard module for dates, times, and date arithmetic. 'time' is mainly for sleep() and performance timing."}},
+{id:"venv",label:"Virtual environments & pip",level:"core",content:`<p>Always use a virtual environment. It keeps each project's packages isolated.</p>
+<pre># Create
+python -m venv venv
+
+# Activate
+venv\Scripts\activate    # Windows
+source venv/bin/activate # Mac / Linux
+# (venv) appears in your terminal prompt
+
+# Install packages
+pip install requests
+pip install pandas openpyxl
+pip install beautifulsoup4 lxml
+pip install pdfplumber selenium
+
+pip list                         # what's installed
+pip show requests                # info about one package
+
+pip freeze > requirements.txt    # save to file
+pip install -r requirements.txt  # install from file
+
+deactivate                       # exit environment</pre>`,
+quiz:{q:"What does 'pip freeze > requirements.txt' do?",opts:["Installs packages","Deletes packages","Saves installed packages to a file","Creates venv"],ans:2,exp:"pip freeze lists all installed packages. > saves that list to a file so you or others can reinstall everything later."}},
+{id:"json_mod",label:"JSON handling",level:"inter",content:`<pre>import json
+
+data = {"name":"Ifeanyi","scores":[95,87],"active":True}
+
+json.dumps(data)              # dict → JSON string
+json.dumps(data, indent=2)    # pretty-print
+
+json.loads('{"name":"Ada"}')  # JSON string → dict
+
+with open("data.json","w") as f:
+    json.dump(data, f, indent=2)   # dict → file
+
+with open("data.json","r") as f:
+    loaded = json.load(f)          # file → dict
+
+# Most common real use — API responses
+import requests
+r    = requests.get("https://api.exchangerate-api.com/v4/latest/USD")
+data = r.json()           # auto-parses JSON
+rate = data["rates"]["NGN"]
+print(f"1 USD = {rate} NGN")</pre>`,
+quiz:{q:"Which converts a Python dict to a JSON string?",opts:["json.load()","json.loads()","json.dumps()","json.dump()"],ans:2,exp:"dumps() = dict to string. dump() = dict to file. loads() = string to dict. load() = file to dict."}},
+]},
+{id:"files",label:"9. Files & I/O",topics:[
+{id:"readwrite",label:"Reading & writing files",level:"core",content:`<pre>with open("data.txt","w") as f:
+    f.write("Hello\n")
+    f.write("Second line\n")
+
+with open("data.txt","r") as f:
+    content = f.read()        # entire file as string
+
+with open("data.txt","r") as f:
+    lines = f.readlines()     # list of lines
+
+with open("data.txt","r") as f:
+    for line in f:            # memory-efficient loop
+        print(line.strip())
+
+with open("data.txt","a") as f:   # append (no overwrite)
+    f.write("New line\n")
+
+# Modes: "r" read  "w" write(overwrite)  "a" append
+#         "x" create(error if exists)   "rb"/"wb" binary
+
+import os
+os.path.exists("data.txt")         # True/False
+os.path.getsize("data.txt")        # bytes
+os.listdir(".")                     # list directory
+os.makedirs("folder", exist_ok=True)
+os.rename("old.txt","new.txt")
+os.remove("file.txt")</pre>`,
+quiz:{q:"Difference between 'w' and 'a' mode?",opts:["No difference","'w' appends, 'a' overwrites","'w' overwrites, 'a' appends","'a' is binary"],ans:2,exp:"'w' creates or overwrites from scratch. 'a' adds to the end of an existing file."}},
+{id:"csvpandas",label:"CSV & Excel with pandas",level:"inter",content:`<pre>import pandas as pd
+
+df = pd.read_csv("sales.csv")
+df = pd.read_excel("sales.xlsx")
+
+df.head()          # first 5 rows
+df.shape           # (rows, columns)
+df.columns         # column names
+df.dtypes          # data types per column
+df.describe()      # statistics summary
+df.info()          # full overview
+
+df["name"]                     # one column
+df[["name","price"]]           # multiple columns
+df.iloc[0]                     # row by position
+df.loc[0]                      # row by label
+
+df[df["price"] > 1000]
+df[df["city"] == "Lagos"]
+df[(df["age"]>18) & (df["city"]=="Lagos")]
+
+df["total"]   = df["qty"] * df["price"]
+df.drop("col", axis=1, inplace=True)
+df.rename(columns={"old":"new"}, inplace=True)
+df.fillna(0, inplace=True)
+df.dropna(inplace=True)
+
+df.groupby("city")["sales"].sum()
+df.groupby("month")["revenue"].mean()
+
+df.to_csv("output.csv", index=False)
+df.to_excel("output.xlsx", index=False)</pre>`,
+quiz:{q:"What does df[df['age'] > 18] do?",opts:["Deletes rows where age > 18","Returns rows where age > 18","Updates age to 18","Counts matching rows"],ans:1,exp:"Boolean indexing — returns a new dataframe containing only rows matching the condition."}},
+]},
+{id:"scraping",label:"10. Web scraping",topics:[
+{id:"bs4",label:"Requests + BeautifulSoup",level:"inter",content:`<pre>import requests
+from bs4 import BeautifulSoup
+import pandas as pd
+
+url     = "https://books.toscrape.com"
+headers = {"User-Agent":"Mozilla/5.0"}
+r       = requests.get(url, headers=headers)
+r.raise_for_status()    # error if request failed
+
+soup = BeautifulSoup(r.content, "html.parser")
+
+soup.find("h1")                       # first h1
+soup.find_all("p")                    # all p tags
+soup.find("div", class_="price")      # by class
+soup.find(id="main")                  # by id
+el.text.strip()                       # get text
+el["href"]                            # get attribute
+el.get("href","")                     # safe get
+
+soup.select("div.product h2")         # CSS selector
+soup.select_one("p.price")            # first match
+
+books = []
+for a in soup.find_all("article", class_="product_pod"):
+    books.append({
+        "title": a.h3.a["title"],
+        "price": a.find("p","price_color").text.strip()
+    })
+
+pd.DataFrame(books).to_excel("books.xlsx", index=False)</pre>`,
+quiz:{q:"Difference between find() and find_all()?",opts:["No difference","find() is faster","find() = first match; find_all() = all matches as list","find_all() only searches by class"],ans:2,exp:"find() returns one element or None. find_all() returns a list of all matches."}},
+{id:"pagination",label:"Pagination & polite scraping",level:"adv",content:`<pre>import requests
+from bs4 import BeautifulSoup
+import time, random
+import pandas as pd
+
+all_data = []
+session  = requests.Session()
+session.headers.update({"User-Agent":"Mozilla/5.0"})
+
+for page in range(1, 11):
+    url = f"https://books.toscrape.com/catalogue/page-{page}.html"
+    try:
+        r = session.get(url, timeout=10)
+        r.raise_for_status()
+    except requests.RequestException as e:
+        print(f"Page {page} failed: {e}")
+        continue
+
+    soup = BeautifulSoup(r.content, "html.parser")
+    for book in soup.find_all("article", class_="product_pod"):
+        all_data.append({
+            "title": book.h3.a["title"],
+            "price": book.find("p","price_color").text.strip(),
+            "page" : page
+        })
+
+    print(f"Page {page}: {len(all_data)} total")
+    time.sleep(random.uniform(1, 2.5))   # random delay!
+
+pd.DataFrame(all_data).to_excel("scraped.xlsx", index=False)</pre>
+<p>Golden rules: always use delays, handle errors with try/except, use sessions, set a User-Agent, never scrape faster than a human browses.</p>`,
+quiz:{q:"Why use random.uniform(1,2.5) instead of time.sleep(1)?",opts:["Faster","Random delays look human and avoid detection","Uses less memory","sleep() is deprecated"],ans:1,exp:"Fixed delays are easy to detect as bots. Random delays mimic real human browsing and make blocking harder."}},
+]},
+{id:"automation",label:"11. Automation",topics:[
+{id:"excel_a",label:"Excel automation",level:"inter",content:`<pre>import pandas as pd
+from openpyxl import load_workbook
+from openpyxl.styles import Font, PatternFill, Alignment
+from openpyxl.utils import get_column_letter
+
+df = pd.read_excel("sales.xlsx")
+df["total"] = df["qty"] * df["price"]
+df["month"] = pd.to_datetime(df["date"]).dt.month_name()
+df.groupby("month")["total"].sum().reset_index() \
+  .to_excel("processed.xlsx", index=False)
+
+wb = load_workbook("processed.xlsx")
+ws = wb.active
+
+for cell in ws[1]:    # style header row
+    cell.font      = Font(bold=True, color="FFFFFF")
+    cell.fill      = PatternFill("solid", fgColor="1D9E75")
+    cell.alignment = Alignment(horizontal="center")
+
+for col in ws.columns:
+    maxw = max(len(str(c.value or "")) for c in col)
+    ws.column_dimensions[
+        get_column_letter(col[0].column)].width = maxw + 4
+
+ws["D1"] = "Grand Total"
+ws["D2"] = f"=SUM(C2:C{ws.max_row})"
+
+wb.save("styled_report.xlsx")</pre>`,
+quiz:{q:"Why use both pandas and openpyxl?",opts:["They're the same","pandas for data work; openpyxl for formatting","openpyxl can't read Excel","pandas can't save Excel"],ans:1,exp:"pandas excels at manipulation (filter, groupby, math). openpyxl gives fine-grained control over formatting, formulas, and cell styles."}},
+{id:"pdf_a",label:"PDF extraction",level:"inter",content:`<pre>import pdfplumber, pandas as pd, re
+
+with pdfplumber.open("report.pdf") as pdf:
+    print(f"Pages: {len(pdf.pages)}")
+    for i, page in enumerate(pdf.pages, 1):
+        print(f"--- Page {i} ---")
+        print(page.extract_text())
+
+# Extract tables from every page
+all_rows = []
+with pdfplumber.open("report.pdf") as pdf:
+    for page in pdf.pages:
+        for table in page.extract_tables():
+            for row in table:
+                all_rows.append(row)
+
+df = pd.DataFrame(all_rows[1:], columns=all_rows[0])
+df.to_excel("extracted.xlsx", index=False)
+
+# Extract specific values with regex
+with pdfplumber.open("invoice.pdf") as pdf:
+    text = "\n".join(p.extract_text() for p in pdf.pages)
+
+invoices = re.findall(r'Invoice #(\d+)', text)
+amounts  = re.findall(r'Total:\s*₦([\d,]+)', text)
+dates    = re.findall(r'\d{2}/\d{2}/\d{4}', text)
+
+# Scanned PDF (needs tesseract installed)
+# import pytesseract; from PIL import Image
+# text = pytesseract.image_to_string(Image.open("scan.png"))</pre>`,
+quiz:{q:"What does page.extract_tables() return?",opts:["A string","A list of tables (list of rows)","A DataFrame","A CSV string"],ans:1,exp:"extract_tables() returns a list of tables. Each table is a list of rows. Each row is a list of cell strings."}},
+]},
+{id:"advanced",label:"12. Advanced",topics:[
+{id:"generators",label:"Generators & iterators",level:"adv",content:`<p>Generators produce values one at a time — memory-efficient for large data.</p>
+<pre>def count_up(limit):
+    n = 0
+    while n < limit:
+        yield n       # pause and return value
+        n += 1
+
+for num in count_up(5):
+    print(num)        # 0 1 2 3 4
+
+gen = count_up(3)
+next(gen)   # 0
+next(gen)   # 1
+next(gen)   # 2
+
+# Generator expression (lazy — almost no memory)
+squares_gen  = (x**2 for x in range(1_000_000))
+squares_list = [x**2 for x in range(1_000_000)]  # uses lots of RAM
+
+# Real use: large file line-by-line
+def read_large_csv(filename):
+    with open(filename) as f:
+        header = next(f)
+        for line in f:
+            yield line.strip().split(",")
+
+for row in read_large_csv("huge.csv"):
+    process(row)   # only one row in memory</pre>`,
+quiz:{q:"What keyword makes a function a generator?",opts:["return","generate","yield","produce"],ans:2,exp:"yield pauses the function and sends a value. When called again it resumes from where it left off."}},
+{id:"ctx",label:"Context managers",level:"adv",content:`<pre>from contextlib import contextmanager
+import time
+
+@contextmanager
+def timer(label):
+    start = time.time()
+    try:
+        yield
+    finally:
+        print(f"{label}: {time.time()-start:.3f}s")
+
+with timer("Data processing"):
+    data = [x**2 for x in range(1_000_000)]
+// Data processing: 0.083s
+
+class DBConnection:
+    def __enter__(self):
+        print("Connecting...")
+        return self
+
+    def __exit__(self, exc_type, exc_val, exc_tb):
+        print("Closing connection")
+        return False
+
+with DBConnection() as db:
+    print("Using db:", db)</pre>`,
+quiz:{q:"What happens to a file after 'with open()' block ends?",opts:["Stays open","Must close manually","Auto-closed","Deleted"],ans:2,exp:"The context manager calls __exit__ automatically, which closes the file — even if an error occurs inside."}},
+{id:"hints",label:"Type hints & docstrings",level:"inter",content:`<pre>def calculate_total(
+    price: float,
+    quantity: int,
+    discount: float = 0.0
+) -> float:
+    """
+    Calculate total price after discount.
+
+    Args:
+        price:    Unit price in naira
+        quantity: Number of items
+        discount: Decimal (0.1 = 10%)
+
+    Returns:
+        Total after discount applied
+
+    Example:
+        calculate_total(1000, 5, 0.1)  # 4500.0
+    """
+    return price * quantity * (1 - discount)
+
+from typing import List, Dict, Optional
+
+def process(names: List[str]) -> Dict[str, int]:
+    return {name: len(name) for name in names}
+
+def find(user_id: int) -> Optional[Dict]:
+    # Optional = can return None
+    ...
+
+# Python 3.10+ cleaner syntax
+def greet(name: str | None = None) -> str:
+    return f"Hello, {name or 'stranger'}"</pre>`,
+quiz:{q:"What does Optional[str] mean?",opts:["Argument is optional","Value can be str or None","String is optional whitespace","Python ignores the hint"],ans:1,exp:"Optional[str] means the value can be a string or None. Equivalent to str | None."}},
+]},
+];
+
+let done=new Set(),streak=1,qs={};
+const total=S.reduce((a,s)=>a+s.topics.length,0);
+
+// Initialize State LocalStorage Controls
+try{
+  const sv=localStorage.getItem('ph3_done');
+  if(sv) done=new Set(JSON.parse(sv));
+  const ld=localStorage.getItem('ph3_last');
+  streak=parseInt(localStorage.getItem('ph3_streak')||'1');
+  const today=new Date().toDateString();
+  if(ld!==today){
+    const y=new Date();y.setDate(y.getDate()-1);
+    if(ld===y.toDateString()) streak++;
+    else if(ld!==today) streak=1;
+    localStorage.setItem('ph3_last',today);
+    localStorage.setItem('ph3_streak',streak);
+  }
+  
+  // Theme state persistence loader
+  const savedTheme = localStorage.getItem('ph3_theme') || 'light';
+  document.documentElement.setAttribute('data-theme', savedTheme);
+  document.getElementById('themeToggle').textContent = savedTheme === 'dark' ? '☀️ Light' : '🌙 Dark';
+}catch(e){}
+
+let ai=0;
+
+// Theme Toggling Functionality
+function toggleTheme() {
+  const currentTheme = document.documentElement.getAttribute('data-theme');
+  const newTheme = currentTheme === 'dark' ? 'light' : 'dark';
+  document.documentElement.setAttribute('data-theme', newTheme);
+  document.getElementById('themeToggle').textContent = newTheme === 'dark' ? '☀️ Light' : '🌙 Dark';
+  try { localStorage.setItem('ph3_theme', newTheme); } catch(e) {}
+}
+
+function sv2(){try{localStorage.setItem('ph3_done',JSON.stringify([...done]))}catch(e){}}
+
+function upd(){
+  const d=done.size,pct=Math.round(d/total*100);
+  document.getElementById('sd').textContent=d;
+  document.getElementById('st').textContent=total;
+  document.getElementById('sp').textContent=pct+'%';
+  document.getElementById('ss').textContent=streak+'🔥';
+  document.getElementById('pf').style.width=pct+'%';
+  document.getElementById('pt').textContent=`${d} of ${total} topics completed — ${pct}%`;
+  S.forEach((s,i)=>{
+    const b=document.getElementById('nt'+i);
+    if(b) b.classList.toggle('fin',s.topics.every(t=>done.has(t.id)));
+  });
+}
+
+function bclass(l){return l==='core'?'bc':l==='inter'?'bi':'ba'}
+function blabel(l){return l==='core'?'Core':l==='inter'?'Intermediate':'Advanced'}
+
+function tHTML(t){
+  const d=done.has(t.id);
+  const q=t.quiz;
+  const qh=q?`<div class="qbox">
+    <div class="qq">Quick check: ${q.q}</div>
+    <div class="qopts" id="qo${t.id}">${q.opts.map((o,i)=>`<button onclick="ans('${t.id}',${i})">${o}</button>`).join('')}</div>
+    <div id="qf${t.id}"></div>
+  </div>`:'';
+  return `<div class="tp" id="tp${t.id}">
+    <div class="th" onclick="tog('${t.id}')">
+      <span class="tlbl"><span style="${d?'text-decoration:line-through;color:var(--text-secondary)':''}">${d?'✓ ':''}${t.label}</span></span>
+      <div style="display:flex;align-items:center;gap:8px;flex-shrink:0">
+        <span class="tbadge ${bclass(t.level)}">${blabel(t.level)}</span>
+        <span class="chev" id="cv${t.id}">▼</span>
+      </div>
+    </div>
+    <div class="tbody" id="bd${t.id}">${t.content}${qh}<button class="mdb" id="mb${t.id}" onclick="mkd('${t.id}')" ${d?'disabled':''}>${d?'✓ Reviewed':'Mark as reviewed ✓'}</button></div>
+  </div>`;
+}
+
+function renderNav(){
+  document.getElementById('nav').innerHTML=S.map((s,i)=>
+    `<button class="tb${i===ai?' act':''}" id="nt${i}" onclick="show(${i})">${s.label}</button>`
+  ).join('');
+}
+
+function renderSecs(){
+  document.getElementById('secs').innerHTML=S.map((s,si)=>`
+    <div class="sec${si===ai?' act':''}" id="sc${si}">
+      <div class="stitle">${s.label}</div>
+      <div class="ssub">Expand topic · do quiz · mark done.</div>
+      ${s.topics.map(t=>tHTML(t)).join('')}
+    </div>`).join('');
+}
+
+function show(i){
+  ai=i;
+  document.querySelectorAll('.sec').forEach((s,si)=>s.classList.toggle('act',si===i));
+  document.querySelectorAll('.tb').forEach((b,bi)=>b.classList.toggle('act',bi===i));
+  qs={};
+}
+
+function tog(id){
+  const bd=document.getElementById('bd'+id);
+  const cv=document.getElementById('cv'+id);
+  const open=bd.classList.contains('op');
+  document.querySelectorAll('.tbody.op').forEach(b=>b.classList.remove('op'));
+  document.querySelectorAll('.chev.op').forEach(c=>c.classList.remove('op'));
+  if(!open){bd.classList.add('op');cv.classList.add('op');}
+}
+
+function ans(tid,chosen){
+  if(qs[tid]) return;
+  qs[tid]=true;
+  const t=S.flatMap(s=>s.topics).find(x=>x.id===tid);
+  const q=t.quiz;
+  document.querySelectorAll(`#qo${tid} button`).forEach((b,i)=>{
+    if(i===q.ans) b.classList.add('ok');
+    else if(i===chosen) b.classList.add('no');
+    b.disabled=true;
+  });
+  document.getElementById('qf'+tid).innerHTML=`<div class="qfb ${chosen===q.ans?'fb-ok':'fb-no'}">${chosen===q.ans?'Correct! ':'Not quite. '}${q.exp}</div>`;
+}
+
+function mkd(id){
+  done.add(id);sv2();
+  const mb=document.getElementById('mb'+id);
+  if(mb){mb.textContent='✓ Reviewed';mb.disabled=true;}
+  const lbl=document.querySelector(`#tp${id} .tlbl span`);
+  if(lbl){
+    lbl.style.textDecoration='line-through';
+    lbl.style.color='var(--text-secondary)';
+    if(!lbl.textContent.startsWith('✓')) {
+       lbl.textContent = '✓ ' + lbl.textContent;
+    }
+  }
+  upd();renderNav();
+}
+
+renderNav();renderSecs();upd();
+
+// PWA Service Worker Inline Register Strategy 
+if ('serviceWorker' in navigator) {
+  window.addEventListener('load', () => {
+    const swCode = `
+      const CACHE_NAME = 'py-handbook-cache-v3';
+      self.addEventListener('install', e => {
+        e.waitUntil(caches.open(CACHE_NAME).then(c => c.addAll(['./', './index.html'])));
+      });
+      self.addEventListener('fetch', e => {
+        e.respondWith(caches.match(e.request).then(r => r || fetch(e.request)));
+      });
+    `;
+    const blob = new Blob([swCode], { type: 'application/javascript' });
+    const swUrl = URL.createObjectURL(blob);
+    navigator.serviceWorker.register(swUrl).catch(() => {});
+  });
+}
+</script>
+</body>
+</html>
